@@ -34,11 +34,11 @@ d3.csv("assets/data/data.csv").then(function(healthData) {
       // Step 2: Create scale functions
       // ==============================
       var xLinearScale = d3.scaleLinear()
-        .domain([20, d3.max(healthData, d => d.poverty)])
+        .domain([d3.min(healthData, d => d.poverty)*.9, d3.max(healthData, d => d.poverty)*1.1])
         .range([0, width]);
   
       var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(healthData, d => d.healthcare)])
+      .domain([d3.min(healthData, d => d.healthcare)*.9, d3.max(healthData, d => d.healthcare)*1.1])
         .range([height, 0]);
   
       // Step 3: Create axis functions
@@ -56,39 +56,17 @@ d3.csv("assets/data/data.csv").then(function(healthData) {
         .call(leftAxis);
   
       // Step 5: Create Circles
-      // ==============================
-      var circlesGroup = chartGroup.selectAll("circle")
-      .data(healthData)
-      .enter()
-      .append("circle")
-      .attr("cx", d => xLinearScale(d.poverty))
-      .attr("cy", d => yLinearScale(d.healthcare))
-      .attr("r", "15")
-      .attr("fill", "pink")
-      .attr("opacity", ".5");
+    // ==============================
+    var circlesGroup = chartGroup.selectAll("circle")
+    .data(healthData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xLinearScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.healthcare))
+    .attr("r", "8")
+    .attr("fill", "pink")
+    .attr("opacity", ".5");
   
-      // // Step 6: Initialize tool tip
-      // // ==============================
-      // var toolTip = d3.tip()
-      //   .attr("class", "tooltip")
-      //   .offset([80, -60])
-      //   .html(function(d) {
-      //     return (`${d.state}<br>% In Poverty: ${d.poverty}<br% Lacking Healthcare: ${d.healthcare}`);
-      //   });
-  
-      // // Step 7: Create tooltip in the chart
-      // // ==============================
-      // chartGroup.call(toolTip);
-  
-      // // Step 8: Create event listeners to display and hide the tooltip
-      // // ==============================
-      // circlesGroup.on("click", function(data) {
-      //   toolTip.show(data, this);
-      // })
-      //   // onmouseout event
-      //   .on("mouseout", function(data, index) {
-      //     toolTip.hide(data);
-      //   });
   
       // Create axes labels
       chartGroup.append("text")
