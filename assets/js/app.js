@@ -57,15 +57,26 @@ d3.csv("assets/data/data.csv").then(function(healthData) {
   
       // Step 5: Create Circles
     // ==============================
-    var circlesGroup = chartGroup.selectAll("circle")
-    .data(healthData)
-    .enter()
+
+
+    var circlesGroupAll = chartGroup
+      .selectAll("circlesGroup")
+      .data(healthData)
+      .enter()
+
+    var circlesGroup = circlesGroupAll
     .append("circle")
     .attr("cx", d => xLinearScale(d.poverty))
     .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", "8")
+    .attr("r", "9")
     .attr("fill", "pink")
     .attr("opacity", ".5");
+
+    var circlesTextGroup = circlesGroupAll
+    .append("text")
+    .text(d => d.abbr)
+    .attr("x", d => xLinearScale(d.poverty))
+    .attr("y", d => yLinearScale(d.healthcare));
   
   
       // Create axes labels
