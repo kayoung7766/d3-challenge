@@ -68,15 +68,18 @@ d3.csv("assets/data/data.csv").then(function(healthData) {
     .append("circle")
     .attr("cx", d => xLinearScale(d.poverty))
     .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", "9")
+    .attr("r", "10")
     .attr("fill", "pink")
     .attr("opacity", ".5");
 
+    
+    //try to make this centered
     var circlesTextGroup = circlesGroupAll
     .append("text")
     .text(d => d.abbr)
     .attr("x", d => xLinearScale(d.poverty))
-    .attr("y", d => yLinearScale(d.healthcare));
+    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("font-size", "10px");
   
   
       // Create axes labels
