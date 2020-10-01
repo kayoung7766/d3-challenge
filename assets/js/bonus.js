@@ -58,7 +58,11 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         .attr("class", "tooltip")
         .offset([80, -60])
         .html(function (d) {
-            return (`${d.state}<br>${d.healthcare} ${d[chosenXAxis]}`);
+            if (chosenXAxis === "poverty") {
+                return (`${d.state}<br>Lacks healthcare ${d.healthcare}%<br> Poverty ${d.poverty}%`);
+            }else {
+            return (`${d.state}<br>Lacks healthcare ${d.healthcare}%<br> Median Age ${d.age}`);
+        }
         });
 
 
