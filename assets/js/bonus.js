@@ -32,9 +32,7 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
     return circlesGroup;
 }
 
-// Added by Erin
-// Note:  as compared to renderCircles, the attr iterator needs to match what is created initially
-// So above I use "cx" and below I use "x" -  this must match where I defined it in Section 8A ("cx") and Section 8B ("x")
+
 function rendertextCircles(textcirclesGroup, newXScale, chosenXAxis) {
 
     textcirclesGroup.transition()
@@ -63,14 +61,10 @@ function updateToolTip(chosenXAxis, circlesGroup) {
             return (`${d.state}<br>${d.healthcare} ${d[chosenXAxis]}`);
         });
 
-    //Note:  Below circlesGroup is having the tooltip added but other objects could also have the tool tip added
-    // I could add the functionality below because for some reason a second called object as long as an input will work despite not being returned
-    // or call this function with a different object as its focus (input) instead of circlesGroup; the 2nd option is probably better
 
     circlesGroup.call(toolTip);
 
-    // added 'this
-    // https://github.com/Caged/d3-tip/issues/231#issuecomment-459758872    
+
     circlesGroup.on("mouseover", function (data) {
         toolTip.show(data, this);
     })
@@ -88,8 +82,8 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
 //########################  3.  SVG Setup ###################################//
 
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 1100;
+var svgHeight = 600;
 
 var margin = {
     top: 20,
@@ -104,8 +98,8 @@ var height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper, append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
-var svg = d3
-    .select(".chart")
+var svg = d3.select("#scatter")
+    //.select(".chart")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
@@ -156,8 +150,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
     // #################### 6.  chartGroup Append xAxis Object  ###############//
 
     // xLinearScale function above csv import; Note:  xLinearScale is a function contains scaled data specific to the defined axis
-    // Important note:  xScale uses width that is defined above; xScale can only be called below width in the code
-    // scaling function: https://www.d3indepth.com/scales/
+
     var xLinearScale = xScale(healthData, chosenXAxis);
     // Create initial axis functions; generates the scaled axis
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -187,7 +180,6 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
     // #################### 8.  chartGroup Append cirlclesGroupAll Object  ###############//
 
-    // case is important - selectAll() works but SelectAll() would produce a type error - the capitalizaton makes a difference
     var circlesGroupAll = chartGroup
         .selectAll("circlesGroup")
         .data(healthData)
@@ -197,10 +189,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
     // #################### 8A.  circlesGroupAll Append cirlcles Object  ###############//
 
-    //data is already bound to circlesGroupAll and now I am adding the 'circles' with one circle for each data
-    // note that the attributes are "cx" and "cy"; the data is being scaled by the scaling functions defined above; see it is a function
-    // the centers of the circles are also coming from the specific x data group 'chosenXAxis'
-    // append initial circles
+
     var circlesGroup = circlesGroupAll
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
@@ -211,15 +200,12 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
     // #################### 8B.  circlesGroupAll Append text Object  ###############//
 
-    // added by Erin - I wanted to add text to the circles - probably several ways of doing this but here is one.
-    // data is bound to ciclesGroupAll like above and now I add a text element at "x" and "y", not the difference from above.
-    // added round function to make the numbers in the cirlces have no decimals; this is a random data selection; I just wanted something inside the circles. If you want to see why these values are like they are then you need to back-calculate what xScale and transpose is doing
     var textcirclesGroup = circlesGroupAll
         .append("text")
         .text(d => d.abbr)
-        .attr("x", d => xLinearScale(d[chosenXAxis]))
-        .attr("y", d => yLinearScale(d.healthcare));
-
+        .attr("x", d => xLinearScale(d.poverty) - 8)
+        .attr("y", d => yLinearScale(d.healthcare) + 4)
+        .attr("font-size", "10px");
 
     // #################### 9.  chartGroup Append labelsGroup Object  ###############//
     // Create group for two x-axis labels
@@ -258,10 +244,6 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
     // #################### 11.  ADD updates upon clicking axis text  ###############//
 
-    // x axis labels event listener
-    // if you comment out the entire labelsGroup section then you can see that the plot populates but does not update when selecting the axis
-    // note that above this section, only the updateToolTip and xScale functions are called of all the user created functions at the top of the script
-    // the other functions at the top of the page are used to re-define the data applied to the xLinearScale function, xAxis object, circlesGroup object, textcirclesGroup object, circlesGroup object
     labelsGroup.selectAll("text")
         .on("click", function () {
             // get value of selection
