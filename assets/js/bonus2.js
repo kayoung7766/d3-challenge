@@ -27,7 +27,7 @@ function yScale(healthData, chosenYAxis) {
         .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.9,
         d3.max(healthData, d => d[chosenYAxis]) * 1.1
         ])
-        .range([0, width]);  //width define at beginning of main code
+        .range([height, 0]);  //width define at beginning of main code
 
     return YLinearScale;
 
@@ -41,7 +41,7 @@ function renderAxes(newYScale, yAxis) {
         .duration(1000)
         .call(leftAxis);
 
-    return yaxis;
+    return yAxis;
 }
 
 // function used for updating circles group with a transition to
@@ -50,7 +50,7 @@ function renderCircles(circlesGroup, newYScale, chosenYAxis) {
 
     circlesGroup.transition()
         .duration(1000)
-        .attr("cy", d => newXScale(d[chosenYAxis]));
+        .attr("cy", d => newYScale(d[chosenYAxis]));
 
     return circlesGroup;
 }
@@ -80,7 +80,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     var ylabel;
     if (chosenYAxis === "healthcare") {
         ylabel = "Lacks Healthcare (%)";
-    
+
     } else {
         ylabel = "Smokes (%)"
     }
@@ -89,8 +89,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
         .attr("class", "tooltip")
         .offset([80, -60])
         .html(function (d) {
-    
-                return (`${d.state}<br> ${xlabel}: ${chosenXAxis}%<br> ${ylabel}: ${chosenYAxis}%`);
+            return (`${d.state}<br> ${xlabel}: ${chosenXAxis}%<br> ${ylabel}: ${chosenYAxis}%`);
         });
 
 
@@ -168,7 +167,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
     // #################### 5.  chartGroup Append Title   ###############//
 
-// DON'T THINK I NEED THIS FOR CHANGING X AND Y AXIS
+    // DON'T THINK I NEED THIS FOR CHANGING X AND Y AXIS
     // // append y title to left side of chartGroup
     // var yTitle = chartGroup.append("text")
     //     .attr("transform", "rotate(-90)")
@@ -204,7 +203,6 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
     // for future axis value changes then the renderAxes() function needs called
     var yAxis = chartGroup.append("g")
         .classed("y-axis", true)
-        .attr("transform", `translate(0, ${height})`)
         .call(leftAxis);
 
 
@@ -244,9 +242,9 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
     var xlabelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-     // Create group for two x-axis labels
-     var ylabelsGroup = chartGroup.append("g")
-     .attr("transform", `translate(${width / 2}, ${height + 20})`);
+    // Create group for two x-axis labels
+    var ylabelsGroup = chartGroup.append("g")
+    //.attr("transform", `translate(${width / 2}, ${height + 20})`);
 
 
     // #################### 9A.  labelsGroup Append xlabel Object  ###############//
@@ -257,10 +255,10 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .attr("value", "poverty") // value to grab for event listener
         .classed("active", true)
         .text("In Poverty (%)");
-    
+
     var healthcareLabel = ylabelsGroup.append("text")
-        .attr("x", 20)
-        .attr("y", 0)
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
         .attr("value", "healthcare") // value to grab for event listener
         .classed("active", true)
         .text("Lacks Healthcare (%)");
@@ -274,10 +272,10 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .attr("value", "age") // value to grab for event listener
         .classed("inactive", true)
         .text("Age (Median)");
-    
+
     var ageLabel = ylabelsGroup.append("text")
-        .attr("x", 40)
-        .attr("y", 0)
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
         .attr("value", "smokes") // value to grab for event listener
         .classed("inactive", true)
         .text("Smokes (%)");
@@ -312,13 +310,18 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
                 // updates x axis with transition
                 xAxis = renderAxes(xLinearScale, xAxis);
 
+                xLinearScale = xScale(healthData, chosenYAxis);
+
+                // updates y axis with transition
+                xAxis = renderAxes(YLinearScale, YAxis);
+
                 // updates circles with new x values
-                circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+                circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                 // New - updates text labels within circles
-                textcirclesGroup = rendertextCircles(textcirclesGroup, xLinearScale, chosenXAxis);
+                textcirclesGroup = rendertextCircles(textcirclesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
                 // updates tooltips with new info
-                circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-                textcirclesGroup = updateToolTip(chosenXAxis, textcirclesGroup)
+                circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+                textcirclesGroup = updateToolTip(chosenXAxis, chosenYAxis, textcirclesGroup)
 
                 // changes classes to change bold text
                 if (chosenXAxis === "age") {
@@ -339,7 +342,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
                 }
             }
         });
- ylabelsGroup.selectAll("text")
+    ylabelsGroup.selectAll("text")
         .on("click", function () {
             // get value of selection
             var value = d3.select(this).attr("value");
