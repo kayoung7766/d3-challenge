@@ -101,7 +101,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
         //.offset([80, -60])
         .style("font-size", "8px")
         .html(function (d) {
-            return (`${d.state}<br> ${xlabel}: ${d.chosenXAxis}<br> ${ylabel}: ${d.chosenYAxis}`)
+            return (`${d.state}<br> ${xlabel}: ${d[chosenXAxis]}<br> ${ylabel}: ${d[chosenYAxis]}`)
         });
 
 
