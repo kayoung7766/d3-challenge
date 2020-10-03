@@ -179,21 +179,9 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
 
 
-    // #################### 5.  chartGroup Append Title   ###############//
-
-    // DON'T THINK I NEED THIS FOR CHANGING X AND Y AXIS
-    // // append y title to left side of chartGroup
-    // var yTitle = chartGroup.append("text")
-    //     .attr("transform", "rotate(-90)")
-    //     .attr("y", 0 - margin.left)
-    //     .attr("x", 0 - (height / 2))
-    //     .attr("dy", "1em")
-    //     .classed("axis-text", true)
-    //     .text("Lacks Healthcare (%)");
 
 
-
-    // #################### 6.  chartGroup Append xAxis Object  ###############//
+    // #################### 5.  chartGroup Append xAxis Object  ###############//
 
     // xLinearScale function above csv import; Note:  xLinearScale is a function contains scaled data specific to the defined axis
 
@@ -208,7 +196,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .call(bottomAxis);
 
 
-    // #################### 7.  chartGroup Append yAxis Object  ###############//
+    // #################### 6.  chartGroup Append yAxis Object  ###############//
 
     var yLinearScale = yScale(healthData, chosenYAxis);
     // Create initial axis functions; generates the scaled axis
@@ -222,7 +210,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
 
 
-    // #################### 8.  chartGroup Append cirlclesGroupAll Object  ###############//
+    // #################### 7.  chartGroup Append cirlclesGroupAll Object  ###############//
 
     // var circlesGroupAll = chartGroup
     //     .selectAll("circlesGroup")
@@ -231,7 +219,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
 
 
 
-    // #################### 8A.  circlesGroupAll Append cirlcles Object  ###############//
+    // #################### 7A.  circlesGroupAll Append cirlcles Object  ###############//
 
 
     var circlesGroup = chartGroup.selectAll("circle")
@@ -245,7 +233,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         // .attr("fill", "pink")
         .attr("opacity", ".5");
 
-    // #################### 8B.  circlesGroupAll Append text Object  ###############//
+    // #################### 7B.  circlesGroupAll Append text Object  ###############//
 
     var textcirclesGroup = chartGroup.selectAll("abbr")
         .data(healthData)
@@ -257,14 +245,14 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .attr("y", d => yLinearScale(d[chosenYAxis]))
         .attr("font-size", "10px");
 
-    // #################### 9.  chartGroup Append labelsGroup Object  ###############//
+    // #################### 8.  chartGroup Append labelsGroup Object  ###############//
     // Create group for two x-axis labels
     var xlabelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
 
 
-    // #################### 9A.  labelsGroup Append xlabel Object  ###############//
+    // #################### 8A.  labelsGroup Append xlabel Object  ###############//
 
     var povertyLabel = xlabelsGroup.append("text")
         .attr("x", 0)
@@ -289,7 +277,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .classed("inactive", true)
         .text("Income Median $");
     
-    // Create group for two x-axis labels
+    // Create group for two y-axis labels
     var ylabelsGroup = chartGroup.append("g")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin.left)
@@ -305,7 +293,7 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .text("Lacks Healthcare (%)");
 
 
-    // #################### 9B.  labelsGroup Append xlabel Object  ###############//
+    // ####################   labelsGroup Append ylabel Object  ###############//
 
 
     var smokesLabel = ylabelsGroup.append("text")
@@ -324,16 +312,14 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .text("Obese (%)");
 
 
-    // #################### 10.  circlesGroup/Tooltip - no clue why it is this way  ###############//
-    // updateToolTip function above csv import
-    // var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
-    // var textcirclesGroup = updateToolTip(chosenXAxis, chosenYAxis, textcirclesGroup)
+    // #################### 9.  circlesGroup/Tooltip  ###############//
 
 
 
 
 
-    // #################### 11.  ADD updates upon clicking axis text  ###############//
+
+    // #################### 10.  ADD updates upon clicking axis text  ###############//
 
     xlabelsGroup.selectAll("text")
         .on("click", function () {
